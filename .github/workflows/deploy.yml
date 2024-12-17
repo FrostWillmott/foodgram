@@ -92,7 +92,6 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "docker-compose.production.yml"
           target: "/home/${{ secrets.USER }}/foodgram"
-          overwrite: true
       - name: Create .env file on server
         uses: appleboy/ssh-action@master
         with:
