@@ -15,6 +15,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
+CSRF_TRUSTED_ORIGINS = ['https://kittygram.biz']
+
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 AUTH_USER_MODEL = 'users.User'
