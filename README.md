@@ -26,6 +26,7 @@ Foodgram — это онлайн-сервис, на котором пользо�
     DEBUG=True
     ALLOWED_HOSTS=localhost,127.0.0.1
     DATABASE_URL=postgres://user:password@localhost:5432/foodgram
+      ...
     ```
 4. Находясь в папке foodgram, выполните команду:
     ```bash
