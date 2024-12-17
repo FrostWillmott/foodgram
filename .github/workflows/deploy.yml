@@ -90,7 +90,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "/docker-compose.production.yml"
+          source: "docker-compose.production.yml"
           target: "/home/${{ secrets.USER }}/foodgram/docker-compose.production.yml"
           overwrite: true
       - name: Create .env file on server
