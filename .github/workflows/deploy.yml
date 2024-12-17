@@ -79,7 +79,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        script: |
+          script: |
             mkdir -p /home/${{ secrets.USER }}/foodgram
       - name: Checkout repo
         uses: actions/checkout@v3
