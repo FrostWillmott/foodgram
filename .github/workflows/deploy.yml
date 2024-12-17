@@ -83,6 +83,8 @@ jobs:
             mkdir -p /home/${{ secrets.USER }}/foodgram
       - name: Checkout repo
         uses: actions/checkout@v3
+      - name: List files
+        run: ls -la
       - name: Copy docker-compose.yml via ssh
         uses: appleboy/scp-action@master
         with:
@@ -90,9 +92,9 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "./docker-compose.production.yml"
+          source: "docker-compose.production.yml"
           target: "/home/${{ secrets.USER }}/foodgram/docker-compose.production.yml"
-#          debug: false
+          debug: true
       - name: Create .env file on server
         uses: appleboy/ssh-action@master
         with:
