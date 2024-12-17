@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:17
@@ -12,7 +10,7 @@ services:
     restart: always
 
   web:
-    build: .
+    image: frostwillmott/foodgram_backend:latest
     command: gunicorn projectname.wsgi:application --bind 0.0.0.0:8000
     environment:
       DB_HOST: db
