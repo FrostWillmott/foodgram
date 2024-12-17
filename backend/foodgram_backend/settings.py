@@ -17,6 +17,8 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
+AUTH_USER_MODEL = 'users.User'
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -123,8 +125,6 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
-
-AUTH_USER_MODEL = 'users.User'
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
