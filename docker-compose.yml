@@ -2,6 +2,7 @@ volumes:
   pg_data:
   static:
   media:
+  data:
 
 services:
   db:
@@ -16,7 +17,6 @@ services:
       - static:/backend_static
       - media:/media
       - data:/app/data
-
   frontend:
     env_file: .env
     build: ./frontend/

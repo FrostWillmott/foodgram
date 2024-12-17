@@ -2,6 +2,7 @@ volumes:
   pg_data:
   static:
   media:
+  data:
 
 services:
   db:
