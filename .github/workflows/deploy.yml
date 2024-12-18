@@ -100,7 +100,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "data/ingredients.json"
-          target: "/home/${{ secrets.USER }}/foodgram/data"
+          target: "/home/${{ secrets.USER }}/foodgram"
           overwrite: true
       - name: Create .env file on server
         uses: appleboy/ssh-action@master
