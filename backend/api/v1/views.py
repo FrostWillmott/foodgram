@@ -186,7 +186,7 @@ class RecipeViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         """ Save the new recipe and serialize the response data. """
-        recipe = serializer.save()
+        recipe = serializer.save(author=self.request.user)
         read_serializer = RecipeReadSerializer(recipe, context={
             'request': self.request})
         self.response_data = read_serializer.data
@@ -286,7 +286,6 @@ class RecipeViewSet(ModelViewSet):
         buffer = BytesIO()
         p = canvas.Canvas(buffer, pagesize=A4)
 
-        # Use the Unicode-capable font
         p.setFont("DejaVuSans", 14)
         p.drawString(100, 800, "Shopping List")
         p.setFont("DejaVuSans", 12)
