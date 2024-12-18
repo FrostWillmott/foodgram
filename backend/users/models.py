@@ -4,20 +4,18 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
 from .constants import (
-
     MAX_LENGTH_NAME,
     MAX_LENGTH_USERNAME,
-
 )
 from .managers import CustomUserManager
 from .validators import forbidden_username_validator
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     email = models.EmailField(
         unique=True,
-        blank=False
+        blank=False,
     )
     username = models.CharField(
         "Имя пользователя",
@@ -40,7 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     avatar = models.ImageField(
-        upload_to='users/avatars/',
+        upload_to="users/avatars/",
         blank=True,
         null=True,
     )
@@ -55,7 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+    REQUIRED_FIELDS = ["username", "first_name", "last_name"]
 
     class Meta:
         verbose_name = "Пользователь"
