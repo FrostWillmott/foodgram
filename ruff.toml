@@ -1,0 +1,5 @@
+select = ["ALL"]
+fix = true
+line-length = 79
+[lint.pycodestyle]
+max-line-length = 79
