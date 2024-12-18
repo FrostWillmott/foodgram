@@ -6,8 +6,6 @@ from djoser.views import UserViewSet
 from recipes.models import RecipeIngredient
 from recipes.models import Tag, Recipe, Ingredient
 from reportlab.lib.pagesizes import A4
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework import status
 from rest_framework.decorators import action
@@ -21,6 +19,12 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from shopping_lists.models import ShoppingCart
 from subscriptions.models import Subscription
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from io import BytesIO
+from django.http import HttpResponse
 
 from .permissions import IsAuthorOrReadOnly
 from .serializers import CustomUserSerializer, SubscriptionSerializer, \
@@ -182,7 +186,7 @@ class RecipeViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         """ Save the new recipe and serialize the response data. """
-        recipe = serializer.save(author=self.request.user)
+        recipe = serializer.save()
         read_serializer = RecipeReadSerializer(recipe, context={
             'request': self.request})
         self.response_data = read_serializer.data
