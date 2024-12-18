@@ -83,7 +83,9 @@ class CustomUserViewSet(UserViewSet):
         """Update the authenticated user's avatar."""
         user = request.user
         serializer = self.get_serializer(
-            user, data=request.data, context={"request": request}
+            user,
+            data=request.data,
+            context={"request": request},
         )
         if "avatar" not in request.data:
             return Response(
@@ -115,16 +117,22 @@ class CustomUserViewSet(UserViewSet):
         url_path="subscriptions",
     )
     def subscriptions(self, request):
-        """Retrieve the list of users the authenticated user is subscribed to."""
+        """
+        Retrieve the list of users the authenticated user is subscribed to.
+        """
         subscriptions = User.objects.filter(subscribers__user=request.user)
         page = self.paginate_queryset(subscriptions)
         if page is not None:
             serializer = UserWithRecipesSerializer(
-                page, many=True, context={"request": request}
+                page,
+                many=True,
+                context={"request": request},
             )
             return self.get_paginated_response(serializer.data)
         serializer = UserWithRecipesSerializer(
-            subscriptions, many=True, context={"request": request}
+            subscriptions,
+            many=True,
+            context={"request": request},
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -143,7 +151,8 @@ class CustomUserViewSet(UserViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if Subscription.objects.filter(
-            user=request.user, author=author
+            user=request.user,
+            author=author,
         ).exists():
             return Response(
                 {"detail": "Already subscribed."},
@@ -152,7 +161,8 @@ class CustomUserViewSet(UserViewSet):
 
         Subscription.objects.create(user=request.user, author=author)
         serializer = UserWithRecipesSerializer(
-            author, context={"request": request}
+            author,
+            context={"request": request},
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -161,7 +171,8 @@ class CustomUserViewSet(UserViewSet):
         """Unsubscribe the authenticated user from another user."""
         author = get_object_or_404(User, id=id)
         subscription = Subscription.objects.filter(
-            user=request.user, author=author
+            user=request.user,
+            author=author,
         ).first()
         if subscription is None:
             return Response(
@@ -201,7 +212,9 @@ class RecipeViewSet(ModelViewSet):
     ]
 
     def get_serializer_class(self):
-        """Return the appropriate serializer class based on the request method."""
+        """
+        Return the appropriate serializer class based on the request method.
+        """
         if self.request.method in ["POST", "PUT", "PATCH"]:
             return RecipeWriteSerializer
         return RecipeReadSerializer
@@ -212,7 +225,7 @@ class RecipeViewSet(ModelViewSet):
         user = self.request.user
         is_favorited = self.request.query_params.get("is_favorited")
         is_in_shopping_cart = self.request.query_params.get(
-            "is_in_shopping_cart"
+            "is_in_shopping_cart",
         )
         tags = self.request.query_params.getlist("tags")
         author = self.request.query_params.get("author")
@@ -246,7 +259,8 @@ class RecipeViewSet(ModelViewSet):
         """Save the new recipe and serialize the response data."""
         recipe = serializer.save()
         read_serializer = RecipeReadSerializer(
-            recipe, context={"request": self.request}
+            recipe,
+            context={"request": self.request},
         )
         self.response_data = read_serializer.data
 
@@ -261,12 +275,15 @@ class RecipeViewSet(ModelViewSet):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
         serializer = self.get_serializer(
-            instance, data=request.data, partial=partial
+            instance,
+            data=request.data,
+            partial=partial,
         )
         serializer.is_valid(raise_exception=True)
         recipe = serializer.save()
         read_serializer = RecipeReadSerializer(
-            recipe, context={"request": request}
+            recipe,
+            context={"request": request},
         )
         return Response(read_serializer.data, status=status.HTTP_200_OK)
 
@@ -277,7 +294,9 @@ class RecipeViewSet(ModelViewSet):
         return Response({"short-link": short_link})
 
     @action(
-        detail=True, methods=["post"], permission_classes=[IsAuthenticated]
+        detail=True,
+        methods=["post"],
+        permission_classes=[IsAuthenticated],
     )
     def favorite(self, request, pk=None):
         """Add a recipe to the authenticated user's favorites."""
@@ -314,7 +333,8 @@ class RecipeViewSet(ModelViewSet):
         """Add a recipe to the authenticated user's shopping cart."""
         recipe = get_object_or_404(Recipe, pk=pk)
         if ShoppingCart.objects.filter(
-            user=request.user, recipe=recipe
+            user=request.user,
+            recipe=recipe,
         ).exists():
             return Response(
                 {"detail": "Recipe already in shopping cart."},
@@ -322,7 +342,8 @@ class RecipeViewSet(ModelViewSet):
             )
         ShoppingCart.objects.create(user=request.user, recipe=recipe)
         serializer = RecipeMinifiedSerializer(
-            recipe, context={"request": request}
+            recipe,
+            context={"request": request},
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -331,7 +352,8 @@ class RecipeViewSet(ModelViewSet):
         """Remove a recipe from the authenticated user's shopping cart."""
         recipe = get_object_or_404(Recipe, pk=pk)
         cart_item = ShoppingCart.objects.filter(
-            user=request.user, recipe=recipe
+            user=request.user,
+            recipe=recipe,
         ).first()
         if cart_item is None:
             return Response(

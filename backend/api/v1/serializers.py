@@ -215,7 +215,8 @@ class RecipeWriteSerializer(ModelSerializer):
                 Ingredient.objects.get(id=ingredient_data["id"])
             except Ingredient.DoesNotExist:
                 raise ValidationError(
-                    f"Ingredient with id {ingredient_data['id']} does not exist."
+                    f"Ingredient with id {ingredient_data['id']}"
+                    f" does not exist."
                 )
         return value
 

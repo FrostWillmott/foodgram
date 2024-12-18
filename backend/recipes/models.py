@@ -47,4 +47,5 @@ class RecipeIngredient(models.Model):
     amount = models.FloatField()
 
     def __str__(self):
-        return f"{self.amount} {self.ingredient.measurement_unit} of {self.ingredient.name}"
+        return (f"{self.amount} {self.ingredient.measurement_unit}"
+                f" of {self.ingredient.name}")
