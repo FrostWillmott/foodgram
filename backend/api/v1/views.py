@@ -163,9 +163,11 @@ class RecipeViewSet(ModelViewSet):
             queryset = queryset.filter(tags__slug__in=tags).distinct()
 
         if not user.is_authenticated:
+            if author:
+                queryset = queryset.filter(author__id=author)
             if is_favorited == '1' or is_in_shopping_cart == '1':
                 return queryset.none()
-            return queryset
+            return queryset.order_by('-pub_date')
 
         if author:
             queryset = queryset.filter(author__id=author)
@@ -180,7 +182,7 @@ class RecipeViewSet(ModelViewSet):
         elif is_in_shopping_cart == '0':
             queryset = queryset.exclude(in_carts__user=user)
 
-        return queryset
+        return queryset.order_by('-pub_date')
 
     def perform_create(self, serializer):
         """ Save the new recipe and serialize the response data. """
@@ -210,7 +212,7 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=True, methods=['get'], url_path='get-link')
     def get_recipe_link(self, request, pk=None):
         """ Generate a short link for the recipe. """
-        short_link = f"https://foodgram.example.org/s/{pk}"
+        short_link = f"https://kittygram.biz/recipes/{pk}"
         return Response({'short-link': short_link})
 
     @action(detail=True, methods=['post'],
@@ -307,48 +309,6 @@ class RecipeViewSet(ModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="shopping_list.pdf"'
         response.write(buffer.read())
         return response
-
-    # def download_shopping_cart(self, request):
-    #     """ Generate a PDF of the authenticated user's shopping cart."""
-    #     cart_items = ShoppingCart.objects.filter(user=request.user)
-    #
-    #     ingredients_map = {}
-    #     for item in cart_items:
-    #         recipe = item.recipe
-    #         for ri in RecipeIngredient.objects.filter(recipe=recipe):
-    #             name = ri.ingredient.name
-    #             unit = ri.ingredient.measurement_unit
-    #             amount = ri.amount
-    #             if name not in ingredients_map:
-    #                 ingredients_map[name] = {'unit': unit, 'amount': amount}
-    #             else:
-    #                 ingredients_map[name]['amount'] += amount
-    #
-    #     buffer = BytesIO()
-    #     p = canvas.Canvas(buffer, pagesize=A4)
-    #     p.setFont("Helvetica", 14)
-    #     p.drawString(100, 800, "Shopping List")
-    #     p.setFont("Helvetica", 12)
-    #
-    #     y = 780
-    #     for name, data in ingredients_map.items():
-    #         line = f"{name} - {data['amount']} {data['unit']}"
-    #         p.drawString(100, y, line)
-    #         y -= 20
-    #         if y < 50:
-    #             p.showPage()
-    #             p.setFont("Helvetica", 12)
-    #             y = 780
-    #
-    #     p.showPage()
-    #     p.save()
-    #
-    #     buffer.seek(0)
-    #     response = HttpResponse(content_type='application/pdf')
-    #     response[
-    #         'Content-Disposition'] = 'attachment; filename="shopping_list.pdf"'
-    #     response.write(buffer.read())
-    #     return response
 
 class IngredientViewSet(ReadOnlyModelViewSet):
     """View set for retrieving ingredients."""
