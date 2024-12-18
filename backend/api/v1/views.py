@@ -19,6 +19,12 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from shopping_lists.models import ShoppingCart
 from subscriptions.models import Subscription
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from io import BytesIO
+from django.http import HttpResponse
 
 from .permissions import IsAuthorOrReadOnly
 from .serializers import CustomUserSerializer, SubscriptionSerializer, \
@@ -27,6 +33,8 @@ from .serializers import CustomUserSerializer, SubscriptionSerializer, \
     RecipeMinifiedSerializer
 
 User = get_user_model()
+
+pdfmetrics.registerFont(TTFont('DejaVuSans', 'api/v1/DejaVuSans.ttf'))
 
 class FoodgramPagination(PageNumberPagination):
     """ Custom pagination class for Foodgram. """
@@ -258,7 +266,7 @@ class RecipeViewSet(ModelViewSet):
             permission_classes=[IsAuthenticated],
             url_path='download_shopping_cart')
     def download_shopping_cart(self, request):
-        """ Generate a PDF of the authenticated user's shopping cart."""
+        """Generate a PDF of the authenticated user's shopping cart."""
         cart_items = ShoppingCart.objects.filter(user=request.user)
 
         ingredients_map = {}
@@ -275,9 +283,11 @@ class RecipeViewSet(ModelViewSet):
 
         buffer = BytesIO()
         p = canvas.Canvas(buffer, pagesize=A4)
-        p.setFont("Helvetica", 14)
+
+        # Use the Unicode-capable font
+        p.setFont("DejaVuSans", 14)
         p.drawString(100, 800, "Shopping List")
-        p.setFont("Helvetica", 12)
+        p.setFont("DejaVuSans", 12)
 
         y = 780
         for name, data in ingredients_map.items():
@@ -286,7 +296,7 @@ class RecipeViewSet(ModelViewSet):
             y -= 20
             if y < 50:
                 p.showPage()
-                p.setFont("Helvetica", 12)
+                p.setFont("DejaVuSans", 12)
                 y = 780
 
         p.showPage()
@@ -294,10 +304,51 @@ class RecipeViewSet(ModelViewSet):
 
         buffer.seek(0)
         response = HttpResponse(content_type='application/pdf')
-        response[
-            'Content-Disposition'] = 'attachment; filename="shopping_list.pdf"'
+        response['Content-Disposition'] = 'attachment; filename="shopping_list.pdf"'
         response.write(buffer.read())
         return response
+
+    # def download_shopping_cart(self, request):
+    #     """ Generate a PDF of the authenticated user's shopping cart."""
+    #     cart_items = ShoppingCart.objects.filter(user=request.user)
+    #
+    #     ingredients_map = {}
+    #     for item in cart_items:
+    #         recipe = item.recipe
+    #         for ri in RecipeIngredient.objects.filter(recipe=recipe):
+    #             name = ri.ingredient.name
+    #             unit = ri.ingredient.measurement_unit
+    #             amount = ri.amount
+    #             if name not in ingredients_map:
+    #                 ingredients_map[name] = {'unit': unit, 'amount': amount}
+    #             else:
+    #                 ingredients_map[name]['amount'] += amount
+    #
+    #     buffer = BytesIO()
+    #     p = canvas.Canvas(buffer, pagesize=A4)
+    #     p.setFont("Helvetica", 14)
+    #     p.drawString(100, 800, "Shopping List")
+    #     p.setFont("Helvetica", 12)
+    #
+    #     y = 780
+    #     for name, data in ingredients_map.items():
+    #         line = f"{name} - {data['amount']} {data['unit']}"
+    #         p.drawString(100, y, line)
+    #         y -= 20
+    #         if y < 50:
+    #             p.showPage()
+    #             p.setFont("Helvetica", 12)
+    #             y = 780
+    #
+    #     p.showPage()
+    #     p.save()
+    #
+    #     buffer.seek(0)
+    #     response = HttpResponse(content_type='application/pdf')
+    #     response[
+    #         'Content-Disposition'] = 'attachment; filename="shopping_list.pdf"'
+    #     response.write(buffer.read())
+    #     return response
 
 class IngredientViewSet(ReadOnlyModelViewSet):
     """View set for retrieving ingredients."""
