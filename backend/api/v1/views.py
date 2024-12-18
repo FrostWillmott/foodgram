@@ -6,6 +6,8 @@ from djoser.views import UserViewSet
 from recipes.models import RecipeIngredient
 from recipes.models import Tag, Recipe, Ingredient
 from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework import status
 from rest_framework.decorators import action
@@ -19,12 +21,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from shopping_lists.models import ShoppingCart
 from subscriptions.models import Subscription
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from io import BytesIO
-from django.http import HttpResponse
 
 from .permissions import IsAuthorOrReadOnly
 from .serializers import CustomUserSerializer, SubscriptionSerializer, \
@@ -167,7 +163,7 @@ class RecipeViewSet(ModelViewSet):
                 queryset = queryset.filter(author__id=author)
             if is_favorited == '1' or is_in_shopping_cart == '1':
                 return queryset.none()
-            return queryset.order_by('-pub_date')
+            return queryset.order_by('-id')
 
         if author:
             queryset = queryset.filter(author__id=author)
@@ -182,7 +178,7 @@ class RecipeViewSet(ModelViewSet):
         elif is_in_shopping_cart == '0':
             queryset = queryset.exclude(in_carts__user=user)
 
-        return queryset.order_by('-pub_date')
+        return queryset.order_by('-id')
 
     def perform_create(self, serializer):
         """ Save the new recipe and serialize the response data. """
