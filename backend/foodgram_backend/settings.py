@@ -72,12 +72,14 @@ WSGI_APPLICATION = "foodgram_backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "postgres"),
-        "USER": os.environ.get("POSTGRES_USER", "postgres"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.environ.get("DB_HOST", "db"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+        # "ENGINE": "django.db.backends.postgresql",
+        # "NAME": os.environ.get("POSTGRES_DB", "postgres"),
+        # "USER": os.environ.get("POSTGRES_USER", "postgres"),
+        # "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+        # "HOST": os.environ.get("DB_HOST", "db"),
+        # "PORT": os.environ.get("DB_PORT", "5432"),
     },
 }
 
@@ -105,7 +107,8 @@ USE_I18N = True
 USE_TZ = True
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = "/media"
+# MEDIA_ROOT = "/media"
+MEDIA_ROOT = BASE_DIR / "media"
 
 STATIC_URL = "static/"
 STATIC_ROOT = "/backend_static/static"
@@ -140,8 +143,8 @@ DJOSER = {
         "avatar": ("rest_framework.permissions.IsAuthenticated",),
     },
     "SERIALIZERS": {
-        "user": "api.v1.serializers.CustomUserSerializer",
-        "current_user": "api.v1.serializers.CustomUserSerializer",
+        "user": "api.v1.serializers.UserSerializer",
+        "current_user": "api.v1.serializers.UserSerializer",
         "avatar": "api.v1.serializers.AvatarSerializer",
     },
     "ACTIVATION_URL": "auth/login/",

@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+
 from recipes.models import Recipe
 
 
@@ -16,7 +17,11 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
-        unique_together = ("user", "recipe")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "recipe"], name="unique_user_recipe"
+            ),
+        ]
 
     def __str__(self):
         return f"{self.user.username}'s cart item: {self.recipe.name}"

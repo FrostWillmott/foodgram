@@ -1,5 +1,12 @@
 select = ["ALL"]
 fix = true
 line-length = 79
-[lint.pycodestyle]
-max-line-length = 79
+src = ["."]
+
+[isort]
+combine-as-imports = true
+case-sensitive = true
+split-on-trailing-comma = true
+section-order = ["STDLIB", "THIRDPARTY", "FIRSTPARTY"]
+known-first-party = ["ruff"]
+lines-between-types = 1

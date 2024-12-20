@@ -1,19 +1,22 @@
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.validators import RegexValidator
 from django.db import models
+from django.utils import timezone
 
 from .constants import (
+    MAX_LENGTH_EMAIL,
     MAX_LENGTH_NAME,
     MAX_LENGTH_USERNAME,
+    USENAME_VALIDATOR,
 )
-from .managers import CustomUserManager
-from .validators import forbidden_username_validator
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+# class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractUser):
     USERNAME_FIELD = "email"
     email = models.EmailField(
+        max_length=MAX_LENGTH_EMAIL,
         unique=True,
         blank=False,
     )
@@ -23,7 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         unique=True,
         validators=(
             UnicodeUsernameValidator(),
-            forbidden_username_validator,
+            RegexValidator(regex=USENAME_VALIDATOR),
         ),
     )
     first_name = models.CharField(
@@ -47,11 +50,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=128,
         blank=False,
     )
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
+    # is_active = models.BooleanField(default=True)
+    # is_staff = models.BooleanField(default=False)
+    # is_superuser = models.BooleanField(default=False)
 
-    objects = CustomUserManager()
+    # objects = CustomUserManager()
+    # date_joined = models.DateTimeField(default=timezone.now)
 
     REQUIRED_FIELDS = ["username", "first_name", "last_name"]
 

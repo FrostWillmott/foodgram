@@ -1,20 +1,20 @@
 from django.conf.urls.static import static
 from django.urls import include, path
-from foodgram_backend.settings import MEDIA_ROOT, MEDIA_URL
 from rest_framework.routers import DefaultRouter
 
+from foodgram_backend.settings import MEDIA_ROOT, MEDIA_URL
 from .views import (
-    CustomUserViewSet,
+    UserViewSet,
     IngredientViewSet,
     RecipeViewSet,
     TagViewSet,
 )
 
 router = DefaultRouter()
-router.register(r"users", CustomUserViewSet, basename="users")
-router.register(r"tags", TagViewSet, basename="tag")
-router.register(r"recipes", RecipeViewSet, basename="recipe")
-router.register(r"ingredients", IngredientViewSet, basename="ingredient")
+router.register("users", UserViewSet, basename="users")
+router.register("tags", TagViewSet, basename="tag")
+router.register("recipes", RecipeViewSet, basename="recipe")
+router.register("ingredients", IngredientViewSet, basename="ingredient")
 
 urlpatterns = [
     path("", include(router.urls)),

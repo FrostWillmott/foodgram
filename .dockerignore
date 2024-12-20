@@ -2,5 +2,5 @@ venv
 .git
 db.sqlite3
 .idea
-.env
+backend/foodgram_backend/.env
 .env.example
