@@ -5,9 +5,17 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from users.models import User
-from .constants import MAX_COOKING_TIME, MIN_COOKING_TIME, MIN_AMOUNT, \
-    MAX_AMOUNT, MAX_LENGTH_INGRIDIENT_NAME, MAX_LENGTH_TAG_NAME, \
-    MAX_LENGTH_SLUG, MAX_LENGTH_MEASUREMENT_UNIT, MAX_RECIPE_NAME
+from .constants import (
+    MAX_AMOUNT,
+    MAX_COOKING_TIME,
+    MAX_LENGTH_INGRIDIENT_NAME,
+    MAX_LENGTH_MEASUREMENT_UNIT,
+    MAX_LENGTH_SLUG,
+    MAX_LENGTH_TAG_NAME,
+    MAX_RECIPE_NAME,
+    MIN_AMOUNT,
+    MIN_COOKING_TIME,
+)
 
 
 class Ingredient(models.Model):
@@ -62,8 +70,12 @@ class Recipe(models.Model):
         through="RecipeIngredient",
         related_name="recipes",
     )
-    short_link = models.CharField(max_length=10, unique=True, blank=True,
-                                  null=True)
+    short_link = models.CharField(
+        max_length=10,
+        unique=True,
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         ordering = ["name"]
@@ -74,7 +86,9 @@ class Recipe(models.Model):
     def generate_short_link(self):
         """Generate a unique short link."""
         while True:
-            short_link = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+            short_link = "".join(
+                random.choices(string.ascii_letters + string.digits, k=6),
+            )
             if not Recipe.objects.filter(short_link=short_link).exists():
                 return short_link
 

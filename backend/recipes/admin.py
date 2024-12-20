@@ -8,6 +8,7 @@ class RecipeIngredientInline(admin.TabularInline):
     extra = 1
     min_num = 1
 
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     search_fields = ("name", "author__username", "author__email")

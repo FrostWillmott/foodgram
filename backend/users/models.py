@@ -49,12 +49,6 @@ class User(AbstractUser):
         max_length=128,
         blank=False,
     )
-    # is_active = models.BooleanField(default=True)
-    # is_staff = models.BooleanField(default=False)
-    # is_superuser = models.BooleanField(default=False)
-
-    # objects = CustomUserManager()
-    # date_joined = models.DateTimeField(default=timezone.now)
 
     REQUIRED_FIELDS = ["username", "first_name", "last_name"]
 

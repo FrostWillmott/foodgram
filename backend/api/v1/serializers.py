@@ -46,8 +46,9 @@ class UserSerializer(UserSerializer):
             request
             and request.user.is_authenticated
             and Subscription.objects.filter(
-                user=request.user, author=obj
-            ).exists()
+                user=request.user,
+                author=obj,
+            ).exists(),
         )
 
     def get_is_in_shopping_cart(self, obj):
@@ -57,8 +58,9 @@ class UserSerializer(UserSerializer):
             request
             and request.user.is_authenticated
             and ShoppingCart.objects.filter(
-                user=request.user, recipe=obj
-            ).exists()
+                user=request.user,
+                recipe=obj,
+            ).exists(),
         )
 
     def get_is_favorited(self, obj):
@@ -67,7 +69,7 @@ class UserSerializer(UserSerializer):
         return bool(
             request
             and request.user.is_authenticated
-            and obj.favorites.filter(user=request.user).exists()
+            and obj.favorites.filter(user=request.user).exists(),
         )
 
     def get_recipes_count(self, obj):
@@ -79,6 +81,7 @@ class UserSerializer(UserSerializer):
         if obj.avatar:
             return obj.avatar.url
         return None
+
 
 class AvatarSerializer(ModelSerializer):
     """Serializer for user avatar."""
@@ -95,21 +98,22 @@ class AvatarSerializer(ModelSerializer):
             raise ValidationError("Avatar field is required.")
         return value
 
+
 class SubscriptionSerializer(ModelSerializer):
     """Serializer for creating and validating subscriptions."""
 
     class Meta:
         model = Subscription
-        fields = ('user', 'author')
+        fields = ("user", "author")
         extra_kwargs = {
-            'user': {'read_only': True},
-            'author': {'required': True}
+            "user": {"read_only": True},
+            "author": {"required": True},
         }
 
     def validate(self, data):
         """Validate the subscription data."""
-        user = self.context['request'].user
-        author = data['author']
+        user = self.context["request"].user
+        author = data["author"]
 
         if user == author:
             raise ValidationError("Cannot subscribe to yourself.")
@@ -121,16 +125,18 @@ class SubscriptionSerializer(ModelSerializer):
 
     def create(self, validated_data):
         """Create a new subscription."""
-        user = self.context['request'].user
-        validated_data['user'] = user
+        user = self.context["request"].user
+        validated_data["user"] = user
         return super().create(validated_data)
 
     def to_representation(self, instance):
         """Return the subscription data in the desired format."""
         author_data = UserWithRecipesSerializer(
-            instance.author, context=self.context
+            instance.author,
+            context=self.context,
         ).data
         return author_data
+
 
 class UserWithRecipesSerializer(UserSerializer):
     """Serializer for users with their recipes."""
@@ -178,12 +184,13 @@ class UserWithRecipesSerializer(UserSerializer):
             return obj.avatar.url
         return None
 
+
 class TagSerializer(ModelSerializer):
     """Serializer for tags."""
 
     class Meta:
         model = Tag
-        fields =("id", "name", "slug")
+        fields = ("id", "name", "slug")
 
 
 class IngredientInRecipeReadSerializer(ModelSerializer):
@@ -222,7 +229,8 @@ class IngredientInRecipeWriteSerializer(ModelSerializer):
             Ingredient.objects.get(id=data["ingredient"].id)
         except Ingredient.DoesNotExist:
             raise ValidationError(
-                f"Ingredient with id {data['ingredient'].id} does not exist.")
+                f"Ingredient with id {data['ingredient'].id} does not exist.",
+            )
         return data
 
 
@@ -294,14 +302,18 @@ class RecipeWriteSerializer(ModelSerializer):
         ingredients = data.get("ingredients")
         tags = data.get("tags")
         if not ingredients:
-            raise ValidationError({"ingredients": "Ingredients field cannot be empty."})
+            raise ValidationError(
+                {"ingredients": "Ingredients field cannot be empty."},
+            )
         ingredient_ids = set()
         for ingredient_data in ingredients:
             ingredient_id = ingredient_data["ingredient"].id
             if ingredient_id in ingredient_ids:
-                raise ValidationError({
-                    "ingredients": "Duplicate ingredients are not allowed."
-                })
+                raise ValidationError(
+                    {
+                        "ingredients": "Duplicate ingredients are not allowed.",
+                    },
+                )
             ingredient_ids.add(ingredient_id)
         if not tags:
             raise ValidationError({"tags": "Tags field cannot be empty."})
@@ -384,15 +396,15 @@ class RecipeMinifiedSerializer(ModelSerializer):
 class FavoriteSerializer(ModelSerializer):
     class Meta:
         model = Favorite
-        fields = ('user', 'recipe')
+        fields = ("user", "recipe")
         extra_kwargs = {
-            'user': {'read_only': True},
-            'recipe': {'required': True}
+            "user": {"read_only": True},
+            "recipe": {"required": True},
         }
 
     def validate(self, data):
-        user = self.context['request'].user
-        recipe = data['recipe']
+        user = self.context["request"].user
+        recipe = data["recipe"]
 
         if Favorite.objects.filter(user=user, recipe=recipe).exists():
             raise ValidationError("Recipe is already in favorites.")
@@ -400,27 +412,30 @@ class FavoriteSerializer(ModelSerializer):
         return data
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['user'] = user
+        user = self.context["request"].user
+        validated_data["user"] = user
         return super().create(validated_data)
 
     def to_representation(self, instance):
-        recipe_data = RecipeMinifiedSerializer(instance.recipe,
-                                               context=self.context).data
+        recipe_data = RecipeMinifiedSerializer(
+            instance.recipe,
+            context=self.context,
+        ).data
         return recipe_data
+
 
 class ShoppingCartSerializer(ModelSerializer):
     class Meta:
         model = ShoppingCart
-        fields = ('user', 'recipe')
+        fields = ("user", "recipe")
         extra_kwargs = {
-            'user': {'read_only': True},
-            'recipe': {'required': True}
+            "user": {"read_only": True},
+            "recipe": {"required": True},
         }
 
     def validate(self, data):
-        user = self.context['request'].user
-        recipe = data['recipe']
+        user = self.context["request"].user
+        recipe = data["recipe"]
 
         if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
             raise ValidationError("Recipe is already in shopping cart.")
@@ -428,11 +443,13 @@ class ShoppingCartSerializer(ModelSerializer):
         return data
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['user'] = user
+        user = self.context["request"].user
+        validated_data["user"] = user
         return super().create(validated_data)
 
     def to_representation(self, instance):
-        recipe_data = RecipeMinifiedSerializer(instance.recipe,
-                                               context=self.context).data
+        recipe_data = RecipeMinifiedSerializer(
+            instance.recipe,
+            context=self.context,
+        ).data
         return recipe_data
