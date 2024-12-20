@@ -311,7 +311,8 @@ class RecipeWriteSerializer(ModelSerializer):
             if ingredient_id in ingredient_ids:
                 raise ValidationError(
                     {
-                        "ingredients": "Duplicate ingredients are not allowed.",
+                        "ingredients": "Duplicate ingredients"
+                                       " are not allowed.",
                     },
                 )
             ingredient_ids.add(ingredient_id)
