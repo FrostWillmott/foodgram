@@ -6,6 +6,7 @@ from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -23,23 +24,25 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from foodgram_backend import settings
 from recipes.models import Ingredient, Recipe, Tag
 from shopping_lists.models import ShoppingCart
 from subscriptions.models import Subscription
-from .filters import RecipeFilter, IngredientFilter
+from .filters import IngredientFilter, RecipeFilter
 from .pagination import FoodgramPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (
     AvatarSerializer,
-    UserSerializer,
+    FavoriteSerializer,
     IngredientSerializer,
     RecipeReadSerializer,
     RecipeWriteSerializer,
-    TagSerializer,
-    UserWithRecipesSerializer, SubscriptionSerializer, FavoriteSerializer,
     ShoppingCartSerializer,
+    SubscriptionSerializer,
+    TagSerializer,
+    UserSerializer,
+    UserWithRecipesSerializer,
 )
-from foodgram_backend import settings
 
 User = get_user_model()
 
@@ -187,7 +190,6 @@ class RecipeViewSet(ModelViewSet):
         methods=["post"],
         permission_classes=[IsAuthenticated],
     )
-
     def favorite(self, request, pk=None):
         """Add a recipe to the authenticated user's favorites."""
         recipe = get_object_or_404(Recipe, pk=pk)
@@ -253,11 +255,14 @@ class RecipeViewSet(ModelViewSet):
     )
     def download_shopping_cart(self, request):
         """Generate a PDF of the authenticated user's shopping cart."""
-
-        cart_items = ShoppingCart.objects.filter(user=request.user).values(
-            'recipe__recipeingredient__ingredient__name',
-            'recipe__recipeingredient__ingredient__measurement_unit'
-        ).annotate(total_amount=Sum('recipe__recipeingredient__amount'))
+        cart_items = (
+            ShoppingCart.objects.filter(user=request.user)
+            .values(
+                "recipe__recipeingredient__ingredient__name",
+                "recipe__recipeingredient__ingredient__measurement_unit",
+            )
+            .annotate(total_amount=Sum("recipe__recipeingredient__amount"))
+        )
 
         buffer = BytesIO()
         p = canvas.Canvas(buffer, pagesize=A4)

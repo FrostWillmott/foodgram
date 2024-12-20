@@ -1,7 +1,7 @@
-from drf_extra_fields.fields import Base64ImageField
-
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
+from drf_extra_fields.fields import Base64ImageField
+
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import (
     CharField,
@@ -9,13 +9,12 @@ from rest_framework.fields import (
     SerializerMethodField,
 )
 from rest_framework.relations import PrimaryKeyRelatedField
-from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework.serializers import ModelSerializer
 
+from favorites.models import Favorite
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 from shopping_lists.models import ShoppingCart
 from subscriptions.models import Subscription
-
-from favorites.models import Favorite
 
 User = get_user_model()
 
