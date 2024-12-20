@@ -110,7 +110,6 @@ class UserViewSet(UserViewSet):
         """
         subscriptions = User.objects.filter(subscribers__user=request.user)
         page = self.paginate_queryset(subscriptions)
-        # if page is not None:
         serializer = UserWithRecipesSerializer(
             page,
             many=True,
@@ -279,8 +278,8 @@ class RecipeViewSet(ModelViewSet):
         for item in cart_items:
             item_3 = 'recipe__recipeingredient__ingredient__measurement_unit'
             line = (f"{item['recipe__recipeingredient__ingredient__name']} - "
-                f"{item['total_amount']}"
-                f"{item[item_3]}")
+                    f"{item['total_amount']}"
+                    f"{item[item_3]}")
             p.drawString(100, y, line)
             y -= 20
             if y < 50:
