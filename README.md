@@ -53,7 +53,6 @@ Foodgram — это онлайн-сервис, на котором пользо�
     ```bash
     docker-compose exec backend python manage.py load_ingredients path/to/ingredients.json
     ```
-
 ### Примеры запросов/ответов
 
 1. Создание рецепта:
