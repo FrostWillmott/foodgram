@@ -15,10 +15,10 @@ Foodgram — это онлайн-сервис, на котором пользо�
 
 1. Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/username/projectname.git
+   git clone git@github.com:FrostWillmott/foodgram.git
 2. Перейдите в директорию проекта:
     ```bash
-    cd projectname
+    cd foodgram
    
 3. Создайте файл `.env` и добавьте в него переменные окружения:
     ```dotenv
