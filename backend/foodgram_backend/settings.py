@@ -8,14 +8,14 @@ from django.core.management.utils import get_random_secret_key
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-environ.Env.read_env()
+environ.Env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 
 
 SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-CSRF_TRUSTED_ORIGINS = ["https://kittygram.biz"]
+CSRF_TRUSTED_ORIGINS = [os.environ.get("CSRF_TRUSTED_ORIGINS", "https://foodgram.biz"),]
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
@@ -72,14 +72,12 @@ WSGI_APPLICATION = "foodgram_backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        # "ENGINE": "django.db.backends.postgresql",
-        # "NAME": os.environ.get("POSTGRES_DB", "postgres"),
-        # "USER": os.environ.get("POSTGRES_USER", "postgres"),
-        # "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
-        # "HOST": os.environ.get("DB_HOST", "db"),
-        # "PORT": os.environ.get("DB_PORT", "5432"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_DB", "postgres"),
+        "USER": os.environ.get("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+        "HOST": os.environ.get("DB_HOST", "db"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     },
 }
 
@@ -107,8 +105,7 @@ USE_I18N = True
 USE_TZ = True
 
 MEDIA_URL = "/media/"
-# MEDIA_ROOT = "/media"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = "/media"
 
 STATIC_URL = "static/"
 STATIC_ROOT = "/backend_static/static"
@@ -135,8 +132,8 @@ DJOSER = {
     "SEND_ACTIVATION_EMAIL": False,
     "PERMISSIONS": {
         "recipe_list": ("api.v1.permissions.AuthorStaffOrReadOnly",),
-        "user": ("api.v1.permissions.OwnerUserOrReadOnly",),
-        "user_list": ("api.v1.permissions.OwnerUserOrReadOnly",),
+        "user": ("api.v1.permissions.IsAuthorOrReadOnly",),
+        "user_list": ("api.v1.permissions.IsAuthorOrReadOnly",),
         "user_delete": ("rest_framework.permissions.IsAuthenticated",),
         "me": ("rest_framework.permissions.IsAuthenticated",),
         "current_user": ("rest_framework.permissions.IsAuthenticated",),

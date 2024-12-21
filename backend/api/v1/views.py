@@ -6,6 +6,8 @@ from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+from foodgram_backend import settings
+from recipes.models import Ingredient, Recipe, Tag
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -23,8 +25,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from foodgram_backend import settings
-from recipes.models import Ingredient, Recipe, Tag
 from shopping_lists.models import ShoppingCart
 from subscriptions.models import Subscription
 from .filters import IngredientFilter, RecipeFilter
@@ -105,9 +105,7 @@ class UserViewSet(UserViewSet):
         url_path="subscriptions",
     )
     def subscriptions(self, request):
-        """
-        Retrieve the list of users the authenticated user is subscribed to.
-        """
+        """Retrieve the list of users the authenticated user is subscribed to."""
         subscriptions = User.objects.filter(subscribers__user=request.user)
         page = self.paginate_queryset(subscriptions)
         serializer = UserWithRecipesSerializer(
@@ -116,12 +114,6 @@ class UserViewSet(UserViewSet):
             context={"request": request},
         )
         return self.get_paginated_response(serializer.data)
-        serializer = UserWithRecipesSerializer(
-            subscriptions,
-            many=True,
-            context={"request": request},
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(
         detail=True,
@@ -137,6 +129,8 @@ class UserViewSet(UserViewSet):
             context={"request": request},
         )
         serializer.is_valid(raise_exception=True)
+        #new
+        serializer.save(user=self.request.user)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -148,7 +142,7 @@ class UserViewSet(UserViewSet):
             user=request.user,
             author=author,
         ).delete()
-        if deleted_count == 0:
+        if not deleted_count:
             return Response(
                 {"detail": "Not subscribed."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -180,9 +174,7 @@ class RecipeViewSet(ModelViewSet):
     ]
 
     def get_serializer_class(self):
-        """
-        Return the appropriate serializer class based on the request method.
-        """
+        """Return the appropriate serializer class based on the request method."""
         if self.request.method in ["POST", "PUT", "PATCH"]:
             return RecipeWriteSerializer
         return RecipeReadSerializer
@@ -200,6 +192,8 @@ class RecipeViewSet(ModelViewSet):
             context={"request": request},
         )
         serializer.is_valid(raise_exception=True)
+        #new
+        serializer.save(user=self.request.user)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -207,13 +201,12 @@ class RecipeViewSet(ModelViewSet):
     def unfavorite(self, request, pk=None):
         """Remove a recipe from the authenticated user's favorites."""
         recipe = get_object_or_404(Recipe, pk=pk)
-        favorite = recipe.favorites.filter(user=request.user).first()
-        if not favorite:
+        deleted_count, _ = recipe.favorites.filter(user=request.user).delete()
+        if not deleted_count:
             return Response(
                 {"detail": "Recipe not in favorites."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
@@ -230,6 +223,8 @@ class RecipeViewSet(ModelViewSet):
             context={"request": request},
         )
         serializer.is_valid(raise_exception=True)
+        #new
+        serializer.save(user=self.request.user)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -237,16 +232,15 @@ class RecipeViewSet(ModelViewSet):
     def remove_from_shopping_cart(self, request, pk=None):
         """Remove a recipe from the authenticated user's shopping cart."""
         recipe = get_object_or_404(Recipe, pk=pk)
-        cart_item = ShoppingCart.objects.filter(
+        deleted_count, _ = ShoppingCart.objects.filter(
             user=request.user,
             recipe=recipe,
-        ).first()
-        if cart_item is None:
+        ).delete()
+        if not deleted_count:
             return Response(
                 {"detail": "Recipe not in shopping cart."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        cart_item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
@@ -276,10 +270,12 @@ class RecipeViewSet(ModelViewSet):
         y = 780
 
         for item in cart_items:
-            item_3 = 'recipe__recipeingredient__ingredient__measurement_unit'
-            line = (f"{item['recipe__recipeingredient__ingredient__name']} - "
-                    f"{item['total_amount']}"
-                    f"{item[item_3]}")
+            item_3 = "recipe__recipeingredient__ingredient__measurement_unit"
+            line = (
+                f"{item['recipe__recipeingredient__ingredient__name']} - "
+                f"{item['total_amount']}"
+                f"{item[item_3]}"
+            )
             p.drawString(100, y, line)
             y -= 20
             if y < 50:

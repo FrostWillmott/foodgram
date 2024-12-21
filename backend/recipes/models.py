@@ -14,7 +14,7 @@ from .constants import (
     MAX_LENGTH_TAG_NAME,
     MAX_RECIPE_NAME,
     MIN_AMOUNT,
-    MIN_COOKING_TIME,
+    MIN_COOKING_TIME, MAX_LENGTH_SHORT_LINK,
 )
 
 
@@ -56,11 +56,11 @@ class Recipe(models.Model):
         validators=[
             MinValueValidator(
                 MIN_COOKING_TIME,
-                message="Cooking time must be at least 1 minute.",
+                message=f"Cooking time must be at least {MAX_LENGTH_SHORT_LINK} minute.",
             ),
             MaxValueValidator(
                 MAX_COOKING_TIME,
-                message="Cooking time must not exceed 32,000 minutes.",
+                message=f"Cooking time must not exceed {MAX_COOKING_TIME} minutes.",
             ),
         ],
     )
@@ -71,7 +71,7 @@ class Recipe(models.Model):
         related_name="recipes",
     )
     short_link = models.CharField(
-        max_length=10,
+        max_length=MAX_LENGTH_SHORT_LINK,
         unique=True,
         blank=True,
         null=True,
@@ -106,11 +106,11 @@ class RecipeIngredient(models.Model):
         validators=[
             MinValueValidator(
                 MIN_AMOUNT,
-                message="Cooking time must be at least 1 minute.",
+                message=f"Cooking time must be at least {MAX_LENGTH_SHORT_LINK} minute.",
             ),
             MaxValueValidator(
                 MAX_AMOUNT,
-                message="Cooking time must not exceed 32,000 minutes.",
+                message=f"Cooking time must not exceed {MAX_COOKING_TIME} minutes.",
             ),
         ],
     )

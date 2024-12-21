@@ -6,25 +6,25 @@ volumes:
 services:
   db:
     image: postgres:16
-    env_file: backend/foodgram_backend/.env
+    env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
   backend:
     build: ./backend/
-    env_file: backend/foodgram_backend/.env
+    env_file: .env
     volumes:
       - static:/backend_static
       - media:/media
       - ./data:/app/data
   frontend:
-    env_file: backend/foodgram_backend/.env
+    env_file: .env
     build: ./frontend/
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - static:/frontend_static
   gateway:
     build: ./gateway/
-    env_file: backend/foodgram_backend/.env
+    env_file: .env
     volumes:
       - static:/staticfiles
       - media:/media

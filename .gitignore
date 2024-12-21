@@ -1,6 +1,6 @@
 frontend/node_modules
 infra/frontend/build
-backend/foodgram_backend/.env
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -106,10 +106,10 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-backend/foodgram_backend/.env
+.env
 .venv
 .venv/
-backend/foodgram_backend/.env/
+.env/
 env/
 venv/
 ENV/

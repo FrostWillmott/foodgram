@@ -1,17 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.core.validators import RegexValidator
 from django.db import models
 
 from .constants import (
     MAX_LENGTH_EMAIL,
     MAX_LENGTH_NAME,
     MAX_LENGTH_USERNAME,
-    USENAME_VALIDATOR,
 )
 
 
-# class User(AbstractBaseUser, PermissionsMixin):
 class User(AbstractUser):
     USERNAME_FIELD = "email"
     email = models.EmailField(
@@ -25,7 +22,6 @@ class User(AbstractUser):
         unique=True,
         validators=(
             UnicodeUsernameValidator(),
-            RegexValidator(regex=USENAME_VALIDATOR),
         ),
     )
     first_name = models.CharField(

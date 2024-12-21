@@ -51,27 +51,6 @@ class UserSerializer(UserSerializer):
             ).exists(),
         )
 
-    def get_is_in_shopping_cart(self, obj):
-        """Check if the recipe is in the authenticated user's shopping cart."""
-        request = self.context.get("request")
-        return bool(
-            request
-            and request.user.is_authenticated
-            and ShoppingCart.objects.filter(
-                user=request.user,
-                recipe=obj,
-            ).exists(),
-        )
-
-    def get_is_favorited(self, obj):
-        """Check if the recipe is favorited by the authenticated user."""
-        request = self.context.get("request")
-        return bool(
-            request
-            and request.user.is_authenticated
-            and obj.favorites.filter(user=request.user).exists(),
-        )
-
     def get_recipes_count(self, obj):
         """Get the count of recipes authored by the given user."""
         return Recipe.objects.filter(author=obj).count()
@@ -81,6 +60,38 @@ class UserSerializer(UserSerializer):
         if obj.avatar:
             return obj.avatar.url
         return None
+
+
+class UserWithRecipesSerializer(UserSerializer):
+    """Serializer for users with their recipes."""
+
+    recipes = SerializerMethodField()
+    recipes_count = SerializerMethodField()
+
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields + (
+            "recipes",
+            "recipes_count",
+        )
+
+    def get_recipes(self, obj):
+        """Get the recipes authored by the given user."""
+        recipes_limit = self.context["request"].query_params.get(
+            "recipes_limit",
+        )
+        recipes = Recipe.objects.filter(author=obj)
+
+        if recipes_limit is not None:
+            try:
+                recipes_limit = int(recipes_limit)
+                recipes = recipes[:recipes_limit]
+            except ValueError:
+                pass
+        return RecipeMinifiedSerializer(recipes, many=True).data
+
+    def get_recipes_count(self, obj):
+        """Get the count of recipes authored by the given user."""
+        return Recipe.objects.filter(author=obj).count()
 
 
 class AvatarSerializer(ModelSerializer):
@@ -123,12 +134,6 @@ class SubscriptionSerializer(ModelSerializer):
 
         return data
 
-    def create(self, validated_data):
-        """Create a new subscription."""
-        user = self.context["request"].user
-        validated_data["user"] = user
-        return super().create(validated_data)
-
     def to_representation(self, instance):
         """Return the subscription data in the desired format."""
         author_data = UserWithRecipesSerializer(
@@ -136,53 +141,6 @@ class SubscriptionSerializer(ModelSerializer):
             context=self.context,
         ).data
         return author_data
-
-
-class UserWithRecipesSerializer(UserSerializer):
-    """Serializer for users with their recipes."""
-
-    is_subscribed = SerializerMethodField()
-    recipes = SerializerMethodField()
-    recipes_count = SerializerMethodField()
-    avatar = SerializerMethodField()
-
-    class Meta(UserSerializer.Meta):
-        fields = UserSerializer.Meta.fields + (
-            "is_subscribed",
-            "recipes",
-            "recipes_count",
-            "avatar",
-        )
-
-    def get_is_subscribed(self, obj):
-        """Check if the authenticated user is subscribed to the given user."""
-        user = self.context["request"].user
-        return Subscription.objects.filter(user=user, author=obj).exists()
-
-    def get_recipes(self, obj):
-        """Get the recipes authored by the given user."""
-        recipes_limit = self.context["request"].query_params.get(
-            "recipes_limit",
-        )
-        recipes = Recipe.objects.filter(author=obj)
-
-        if recipes_limit is not None:
-            try:
-                recipes_limit = int(recipes_limit)
-                recipes = recipes[:recipes_limit]
-            except ValueError:
-                pass
-        return RecipeMinifiedSerializer(recipes, many=True).data
-
-    def get_recipes_count(self, obj):
-        """Get the count of recipes authored by the given user."""
-        return Recipe.objects.filter(author=obj).count()
-
-    def get_avatar(self, obj):
-        """Get the URL of the user's avatar."""
-        if obj.avatar:
-            return obj.avatar.url
-        return None
 
 
 class TagSerializer(ModelSerializer):
@@ -221,18 +179,6 @@ class IngredientInRecipeWriteSerializer(ModelSerializer):
         model = RecipeIngredient
         fields = ("id", "amount")
 
-    def validate(self, data):
-        """Validate the ingredient data."""
-        if data["amount"] < 1:
-            raise ValidationError("Ingredient amount must be at least 1.")
-        try:
-            Ingredient.objects.get(id=data["ingredient"].id)
-        except Ingredient.DoesNotExist:
-            raise ValidationError(
-                f"Ingredient with id {data['ingredient'].id} does not exist.",
-            )
-        return data
-
 
 class RecipeReadSerializer(ModelSerializer):
     """Serializer for reading recipes."""
@@ -263,10 +209,12 @@ class RecipeReadSerializer(ModelSerializer):
 
     def get_is_favorited(self, obj):
         """Check if the recipe is favorited by the authenticated user."""
-        user = self.context["request"].user
-        if user.is_anonymous:
-            return False
-        return obj.favorites.filter(user=user).exists()
+        request = self.context.get("request")
+        return bool(
+            request
+            and request.user.is_authenticated
+            and obj.favorites.filter(user=request.user).exists()
+        )
 
     def get_is_in_shopping_cart(self, obj):
         """Check if the recipe is in the authenticated user's shopping cart."""
@@ -358,12 +306,6 @@ class RecipeWriteSerializer(ModelSerializer):
         """Update an existing recipe."""
         ingredients_data = validated_data.pop("ingredients", None)
         tags = validated_data.pop("tags", None)
-
-        if ingredients_data is None or len(ingredients_data) == 0:
-            raise ValidationError(
-                {"ingredients": "This field cannot be empty or missing."},
-            )
-
         instance = super().update(instance, validated_data)
         instance.tags.set(tags)
         instance.ingredients.clear()
@@ -412,11 +354,6 @@ class FavoriteSerializer(ModelSerializer):
 
         return data
 
-    def create(self, validated_data):
-        user = self.context["request"].user
-        validated_data["user"] = user
-        return super().create(validated_data)
-
     def to_representation(self, instance):
         recipe_data = RecipeMinifiedSerializer(
             instance.recipe,
@@ -442,11 +379,6 @@ class ShoppingCartSerializer(ModelSerializer):
             raise ValidationError("Recipe is already in shopping cart.")
 
         return data
-
-    def create(self, validated_data):
-        user = self.context["request"].user
-        validated_data["user"] = user
-        return super().create(validated_data)
 
     def to_representation(self, instance):
         recipe_data = RecipeMinifiedSerializer(
