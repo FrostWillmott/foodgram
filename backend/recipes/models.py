@@ -57,12 +57,12 @@ class Recipe(models.Model):
         validators=[
             MinValueValidator(
                 MIN_COOKING_TIME,
-                message=f"Cooking time must be"
+                message="Cooking time must be"
                         f" at least {MAX_LENGTH_SHORT_LINK} minute.",
             ),
             MaxValueValidator(
                 MAX_COOKING_TIME,
-                message=f"Cooking time must not"
+                message="Cooking time must not"
                         f" exceed {MAX_COOKING_TIME} minutes.",
             ),
         ],
@@ -109,12 +109,12 @@ class RecipeIngredient(models.Model):
         validators=[
             MinValueValidator(
                 MIN_AMOUNT,
-                message=f"Cooking time must be"
+                message="Cooking time must be"
                         f" at least {MAX_LENGTH_SHORT_LINK} minute.",
             ),
             MaxValueValidator(
                 MAX_AMOUNT,
-                message=f"Cooking time must not"
+                message="Cooking time must not"
                         f" exceed {MAX_COOKING_TIME} minutes.",
             ),
         ],

@@ -19,7 +19,7 @@ from subscriptions.models import Subscription
 User = get_user_model()
 
 
-class UserSerializer(UserSerializer):
+class UserSerializer(ModelSerializer):
     """Serializer for user model."""
 
     is_subscribed = SerializerMethodField()
@@ -218,10 +218,16 @@ class RecipeReadSerializer(ModelSerializer):
 
     def get_is_in_shopping_cart(self, obj):
         """Check if the recipe is in the authenticated user's shopping cart."""
-        user = self.context["request"].user
-        if user.is_anonymous:
-            return False
-        return obj.in_carts.filter(user=user).exists()
+        # user = self.context["request"].user
+        # if user.is_anonymous:
+        #     return False
+        # return obj.in_carts.filter(user=user).exists()
+        request = self.context.get("request")
+        return bool(
+            request
+            and request.user.is_authenticated
+            and obj.in_carts.filter(user=request.user).exists()
+        )
 
 
 class RecipeWriteSerializer(ModelSerializer):
