@@ -118,6 +118,7 @@ jobs:
             echo "DB_PORT=${{ secrets.DB_PORT }}" >> /home/${{ secrets.USER }}/foodgram/.env
             echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> /home/${{ secrets.USER }}/foodgram/.env
             echo "DEBUG=${{ secrets.DEBUG }}" >> /home/${{ secrets.USER }}/foodgram/.env
+            echo "CSRF_TRUSTED_ORIGINS=${{ secrets.CSRF_TRUSTED_ORIGINS}}" >> /home/${{ secrets.CSRF_TRUSTED_ORIGINS }}/foodgram/.env
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
