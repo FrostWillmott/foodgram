@@ -105,7 +105,9 @@ class UserViewSet(UserViewSet):
         url_path="subscriptions",
     )
     def subscriptions(self, request):
-        """Retrieve the list of users the authenticated user is subscribed to."""
+        """
+        Retrieve the list of users the authenticated user is subscribed to.
+        """
         subscriptions = User.objects.filter(subscribers__user=request.user)
         page = self.paginate_queryset(subscriptions)
         serializer = UserWithRecipesSerializer(
@@ -129,7 +131,6 @@ class UserViewSet(UserViewSet):
             context={"request": request},
         )
         serializer.is_valid(raise_exception=True)
-        #new
         serializer.save(user=self.request.user)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -174,7 +175,9 @@ class RecipeViewSet(ModelViewSet):
     ]
 
     def get_serializer_class(self):
-        """Return the appropriate serializer class based on the request method."""
+        """
+        Return the appropriate serializer class based on the request method.
+        """
         if self.request.method in ["POST", "PUT", "PATCH"]:
             return RecipeWriteSerializer
         return RecipeReadSerializer
@@ -192,7 +195,6 @@ class RecipeViewSet(ModelViewSet):
             context={"request": request},
         )
         serializer.is_valid(raise_exception=True)
-        #new
         serializer.save(user=self.request.user)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -223,7 +225,6 @@ class RecipeViewSet(ModelViewSet):
             context={"request": request},
         )
         serializer.is_valid(raise_exception=True)
-        #new
         serializer.save(user=self.request.user)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -10,11 +10,12 @@ from .constants import (
     MAX_COOKING_TIME,
     MAX_LENGTH_INGRIDIENT_NAME,
     MAX_LENGTH_MEASUREMENT_UNIT,
+    MAX_LENGTH_SHORT_LINK,
     MAX_LENGTH_SLUG,
     MAX_LENGTH_TAG_NAME,
     MAX_RECIPE_NAME,
     MIN_AMOUNT,
-    MIN_COOKING_TIME, MAX_LENGTH_SHORT_LINK,
+    MIN_COOKING_TIME,
 )
 
 
@@ -56,11 +57,13 @@ class Recipe(models.Model):
         validators=[
             MinValueValidator(
                 MIN_COOKING_TIME,
-                message=f"Cooking time must be at least {MAX_LENGTH_SHORT_LINK} minute.",
+                message=f"Cooking time must be"
+                        f" at least {MAX_LENGTH_SHORT_LINK} minute.",
             ),
             MaxValueValidator(
                 MAX_COOKING_TIME,
-                message=f"Cooking time must not exceed {MAX_COOKING_TIME} minutes.",
+                message=f"Cooking time must not"
+                        f" exceed {MAX_COOKING_TIME} minutes.",
             ),
         ],
     )
@@ -106,11 +109,13 @@ class RecipeIngredient(models.Model):
         validators=[
             MinValueValidator(
                 MIN_AMOUNT,
-                message=f"Cooking time must be at least {MAX_LENGTH_SHORT_LINK} minute.",
+                message=f"Cooking time must be"
+                        f" at least {MAX_LENGTH_SHORT_LINK} minute.",
             ),
             MaxValueValidator(
                 MAX_AMOUNT,
-                message=f"Cooking time must not exceed {MAX_COOKING_TIME} minutes.",
+                message=f"Cooking time must not"
+                        f" exceed {MAX_COOKING_TIME} minutes.",
             ),
         ],
     )
