@@ -13,10 +13,10 @@ environ.Env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 
 SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
-# DEBUG = os.getenv("DEBUG", "False").lower() == "true"
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "*").split(",")
+print(CSRF_TRUSTED_ORIGINS)
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
