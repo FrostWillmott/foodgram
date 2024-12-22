@@ -1,6 +1,6 @@
 from django.conf.urls.static import static
 from django.shortcuts import redirect
-from django.urls import include, path, re_path
+from django.urls import include, path
 from rest_framework.generics import get_object_or_404
 from rest_framework.routers import DefaultRouter
 
