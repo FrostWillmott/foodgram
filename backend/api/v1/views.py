@@ -303,7 +303,7 @@ class RecipeViewSet(ModelViewSet):
         if not recipe.short_link:
             recipe.short_link = recipe.generate_short_link()
             recipe.save()
-        short_link = f"https://kittygram.biz/{recipe.short_link}"
+        short_link = f"https://kittygram.biz/s/{recipe.short_link}"
         return Response({"short-link": short_link}, status=status.HTTP_200_OK)
 
 

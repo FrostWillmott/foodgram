@@ -13,8 +13,7 @@ environ.Env.read_env()
 
 SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
-# DEBUG = os.getenv("DEBUG", "False").lower() == "true"
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "*").split(",")
 
@@ -73,8 +72,6 @@ WSGI_APPLICATION = "foodgram_backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        # "ENGINE": "django.db.backends.sqlite3",
-        # "NAME": BASE_DIR / "db.sqlite3",
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ.get("POSTGRES_DB", "postgres"),
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
