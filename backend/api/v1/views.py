@@ -303,9 +303,12 @@ class RecipeViewSet(ModelViewSet):
         return response
 
     @action(detail=True, methods=["get"], url_path="get-link")
-    def get_recipe_link(self, request):
+    def get_recipe_link(self, request, pk=None):
         """Generate a short link for the recipe."""
         recipe = self.get_object()
+        if not recipe.short_link:
+            return Response({"error": "Short link not found for this recipe."},
+                            status=status.HTTP_404_NOT_FOUND)
         short_link = f"https://kittygram.biz/{recipe.short_link}"
         return Response({"short-link": short_link})
 
