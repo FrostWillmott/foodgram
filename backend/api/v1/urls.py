@@ -23,5 +23,5 @@ urlpatterns = [
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT)
 
 urlpatterns += [
-    path("<str:short_link>/", shortlink_redirect_view, name="recipe-shortlink"),
+    path("<str:short_link>", shortlink_redirect_view, name="recipe-shortlink"),
 ]

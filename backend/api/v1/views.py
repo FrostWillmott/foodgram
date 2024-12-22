@@ -7,8 +7,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from foodgram_backend import settings
-from recipes.models import Ingredient, Recipe, Tag
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -26,6 +24,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from foodgram_backend import settings
+from recipes.models import Ingredient, Recipe, Tag
 from shopping_lists.models import ShoppingCart
 from subscriptions.models import Subscription
 from .filters import IngredientFilter, RecipeFilter
@@ -48,6 +48,10 @@ User = get_user_model()
 
 font_path = os.path.join(settings.BASE_DIR, "api", "v1", "DejaVuSans.ttf")
 pdfmetrics.registerFont(TTFont("DejaVuSans", font_path))
+
+def shortlink_redirect_view(request, short_link):
+    recipe = get_object_or_404(Recipe, short_link=short_link)
+    return redirect(f"/recipes/{recipe.id}/")
 
 
 class UserViewSet(UserViewSet):
@@ -312,8 +316,3 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     permission_classes = (AllowAny,)
     filter_backends = [DjangoFilterBackend]
     filterset_class = IngredientFilter
-
-
-def shortlink_redirect_view(request, short_link):
-    recipe = get_object_or_404(Recipe, short_link=short_link)
-    return redirect(f"/recipes/{recipe.id}/")
