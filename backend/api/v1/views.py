@@ -302,12 +302,12 @@ class RecipeViewSet(ModelViewSet):
         short_link = f"https://kittygram.biz/{recipe.short_link}"
         return Response({"short-link": short_link})
 
-    @action(detail=False, methods=["get"], url_path="/(?P<short_link>[^/.]+)")
-    def redirect_to_recipe(self, request, short_link=None):
-        """Redirect to the recipe page using the short link."""
-        recipe = get_object_or_404(Recipe, short_link=short_link)
-        recipe_url = request.build_absolute_uri(f"/recipes/{recipe.id}/")
-        return HttpResponseRedirect(recipe_url)
+    # @action(detail=False, methods=["get"], url_path="/(?P<short_link>[^/.]+)")
+    # def redirect_to_recipe(self, request, short_link=None):
+    #     """Redirect to the recipe page using the short link."""
+    #     recipe = get_object_or_404(Recipe, short_link=short_link)
+    #     recipe_url = request.build_absolute_uri(f"/recipes/{recipe.id}/")
+    #     return HttpResponseRedirect(recipe_url)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
