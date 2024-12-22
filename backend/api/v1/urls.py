@@ -10,6 +10,7 @@ from .views import (
     UserViewSet, shortlink_redirect_view,
 )
 
+
 router = DefaultRouter()
 router.register("users", UserViewSet, basename="users")
 router.register("tags", TagViewSet, basename="tag")

@@ -1,3 +1,4 @@
+import logging
 import os
 from io import BytesIO
 
@@ -49,8 +50,12 @@ User = get_user_model()
 font_path = os.path.join(settings.BASE_DIR, "api", "v1", "DejaVuSans.ttf")
 pdfmetrics.registerFont(TTFont("DejaVuSans", font_path))
 
+logger = logging.getLogger(__name__)
+
 def shortlink_redirect_view(request, short_link):
+    logger.debug(f"Received short link: {short_link}")
     recipe = get_object_or_404(Recipe, short_link=short_link)
+    logger.debug(f"Redirecting to recipe ID: {recipe.id}")
     return redirect(f"/recipes/{recipe.id}/")
 
 
