@@ -3,8 +3,7 @@ from io import BytesIO
 
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect
+from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from reportlab.lib.pagesizes import A4
