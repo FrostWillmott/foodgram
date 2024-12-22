@@ -149,4 +149,4 @@ DJOSER = {
 
 DEFAULT_FROM_EMAIL = "no-reply@example.com"
 
-APPEND_SLASH=True
+APPEND_SLASH = True
