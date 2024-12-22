@@ -20,5 +20,5 @@ urlpatterns = [
     path("", include(router.urls)),
     path("auth/", include("djoser.urls.authtoken")),
     path("auth/login/", include("django.contrib.auth.urls")),
-    re_path(r"^r/(?P<short_link>[^/]+)/$", RecipeViewSet.as_view({'get': 'redirect_to_recipe'}), name="redirect_to_recipe"),
+    # re_path(r"^r/(?P<short_link>[^/]+)/$", RecipeViewSet.as_view({'get': 'redirect_to_recipe'}), name="redirect_to_recipe"),
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT)
