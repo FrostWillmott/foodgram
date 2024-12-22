@@ -88,12 +88,10 @@ class Recipe(models.Model):
 
     def generate_short_link(self):
         """Generate a unique short link."""
-        while True:
-            short_link = "".join(
-                random.choices(string.ascii_letters + string.digits, k=6),
-            )
-            if not Recipe.objects.filter(short_link=short_link).exists():
-                return short_link
+        short_link = "".join(
+            random.choices(string.ascii_letters + string.digits, k=6),
+        )
+        return short_link
 
     def save(self, *args, **kwargs):
         """Override save method to generate short link on creation."""

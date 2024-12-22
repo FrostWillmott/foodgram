@@ -50,12 +50,9 @@ User = get_user_model()
 font_path = os.path.join(settings.BASE_DIR, "api", "v1", "DejaVuSans.ttf")
 pdfmetrics.registerFont(TTFont("DejaVuSans", font_path))
 
-logger = logging.getLogger(__name__)
 
 def shortlink_redirect_view(request, short_link):
-    logger.debug(f"Received short link: {short_link}")
     recipe = get_object_or_404(Recipe, short_link=short_link)
-    logger.debug(f"Redirecting to recipe ID: {recipe.id}")
     return redirect(f"/recipes/{recipe.id}/")
 
 
@@ -306,7 +303,7 @@ class RecipeViewSet(ModelViewSet):
         return response
 
     @action(detail=True, methods=["get"], url_path="get-link")
-    def get_recipe_link(self, request, pk=None):
+    def get_recipe_link(self, request):
         """Generate a short link for the recipe."""
         recipe = self.get_object()
         short_link = f"https://kittygram.biz/{recipe.short_link}"
