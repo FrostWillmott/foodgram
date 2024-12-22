@@ -4,6 +4,7 @@ from io import BytesIO
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from foodgram_backend import settings
@@ -311,3 +312,8 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     permission_classes = (AllowAny,)
     filter_backends = [DjangoFilterBackend]
     filterset_class = IngredientFilter
+
+
+def shortlink_redirect_view(request, short_link):
+    recipe = get_object_or_404(Recipe, short_link=short_link)
+    return redirect(f"/recipes/{recipe.id}/")

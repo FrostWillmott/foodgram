@@ -1,23 +1,14 @@
 from django.conf.urls.static import static
-from django.shortcuts import redirect
 from django.urls import include, path
-from rest_framework.generics import get_object_or_404
 from rest_framework.routers import DefaultRouter
 
 from foodgram_backend.settings import MEDIA_ROOT, MEDIA_URL
-from recipes.models import Recipe
 from .views import (
     IngredientViewSet,
     RecipeViewSet,
     TagViewSet,
-    UserViewSet,
+    UserViewSet, shortlink_redirect_view,
 )
-
-
-def shortlink_redirect_view(request, short_link):
-    recipe = get_object_or_404(Recipe, short_link=short_link)
-    return redirect(f"/recipes/{recipe.id}/")
-
 
 router = DefaultRouter()
 router.register("users", UserViewSet, basename="users")
