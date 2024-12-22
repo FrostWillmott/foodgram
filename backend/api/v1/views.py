@@ -318,7 +318,3 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     permission_classes = (AllowAny,)
     filter_backends = [DjangoFilterBackend]
     filterset_class = IngredientFilter
-
-# def short_link_redirect(request, short_link):
-#     recipe = get_object_or_404(Recipe, short_link=short_link)
-#     return HttpResponseRedirect(f"/recipes/{recipe.id}/")

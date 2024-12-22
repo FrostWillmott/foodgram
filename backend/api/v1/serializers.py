@@ -204,7 +204,9 @@ class RecipeReadSerializer(ModelSerializer):
             "image",
             "text",
             "cooking_time",
+            "short_link"
         )
+        read_only_fiels = ("short_link",)
 
     def get_is_favorited(self, obj):
         """Check if the recipe is favorited by the authenticated user."""
