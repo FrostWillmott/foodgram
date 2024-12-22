@@ -50,12 +50,6 @@ font_path = os.path.join(settings.BASE_DIR, "api", "v1", "DejaVuSans.ttf")
 pdfmetrics.registerFont(TTFont("DejaVuSans", font_path))
 
 
-def shortlink_redirect_view(request, short_link):
-    recipe = get_object_or_404(Recipe, short_link=short_link)
-    print(f'{recipe.id}')
-    return redirect(f"/recipes/{recipe.id}/")
-
-
 class UserViewSet(UserViewSet):
     """View set for user-related actions."""
 
