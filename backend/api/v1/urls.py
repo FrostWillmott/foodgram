@@ -26,10 +26,11 @@ router.register("recipes", RecipeViewSet, basename="recipe")
 router.register("ingredients", IngredientViewSet, basename="ingredient")
 
 urlpatterns = [
-    # path(
-    #     "<str:short_link>/", shortlink_redirect_view, name="recipe-shortlink"
-    # ),
     path("", include(router.urls)),
     path("auth/", include("djoser.urls.authtoken")),
     path("auth/login/", include("django.contrib.auth.urls")),
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT)
+
+urlpatterns += [
+    path("<str:short_link>/", shortlink_redirect_view, name="recipe-shortlink"),
+]
