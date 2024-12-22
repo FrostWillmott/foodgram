@@ -1,4 +1,3 @@
-import logging
 import os
 from io import BytesIO
 
@@ -53,7 +52,7 @@ pdfmetrics.registerFont(TTFont("DejaVuSans", font_path))
 
 def shortlink_redirect_view(request, short_link):
     recipe = get_object_or_404(Recipe, short_link=short_link)
-    print(f"{recipe.id}")
+    print(f'{recipe.id}')
     return redirect(f"/recipes/{recipe.id}/")
 
 
@@ -308,10 +307,10 @@ class RecipeViewSet(ModelViewSet):
         """Generate a short link for the recipe."""
         recipe = self.get_object()
         if not recipe.short_link:
-            return Response({"error": "Short link not found for this recipe."},
-                            status=status.HTTP_404_NOT_FOUND)
+            recipe.short_link = recipe.generate_short_link()
+            recipe.save()
         short_link = f"https://kittygram.biz/{recipe.short_link}"
-        return Response({"short-link": short_link})
+        return Response({"short-link": short_link}, status=status.HTTP_200_OK)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
