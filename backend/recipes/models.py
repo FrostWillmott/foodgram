@@ -93,7 +93,7 @@ class Recipe(models.Model):
                 random.choices(string.ascii_letters + string.digits, k=6),
             )
             if not Recipe.objects.filter(short_link=short_link).exists():
-                return short_link
+                return 's/'+short_link
 
     def save(self, *args, **kwargs):
         """Override save method to generate short link on creation."""
