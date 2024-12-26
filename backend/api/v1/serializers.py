@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
+# from rest_framework import status
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import (
@@ -12,11 +13,23 @@ from rest_framework.serializers import ModelSerializer
 
 from favorites.models import Favorite
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
+# from rest_framework_simplejwt.exceptions import AuthenticationFailed
+# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from shopping_lists.models import ShoppingCart
 from subscriptions.models import Subscription
 
 User = get_user_model()
 
+# class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+#     def validate(self, attrs):
+#         try:
+#             data = super().validate(attrs)
+#         except AuthenticationFailed:
+#             raise ValidationError(
+#                 {"detail": "No active account found with the given credentials"},
+#                 code=status.HTTP_400_BAD_REQUEST
+#             )
+#         return {"auth_token": data["access"]}
 
 class UserSerializer(ModelSerializer):
     """Serializer for user model."""

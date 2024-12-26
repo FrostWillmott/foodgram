@@ -25,6 +25,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from foodgram_backend import settings
 from recipes.models import Ingredient, Recipe, Tag
+# from rest_framework_simplejwt.views import TokenObtainPairView
 from shopping_lists.models import ShoppingCart
 from subscriptions.models import Subscription
 from .filters import IngredientFilter, RecipeFilter
@@ -48,6 +49,8 @@ User = get_user_model()
 font_path = os.path.join(settings.BASE_DIR, "api", "v1", "DejaVuSans.ttf")
 pdfmetrics.registerFont(TTFont("DejaVuSans", font_path))
 
+# class CustomTokenObtainPairView(TokenObtainPairView):
+#     serializer_class = CustomTokenObtainPairSerializer
 
 class UserViewSet(UserViewSet):
     """View set for user-related actions."""
